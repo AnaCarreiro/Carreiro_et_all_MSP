@@ -33,8 +33,8 @@ $echo "Demultiplexing by 3' adapters and Filtering"
 $echo "Fish"
 $cd Fish
 
-$cutadapt -a file:BarFish3.fas -o ../FishF1{name}.fastq FishF1.fastq -e 0.1 -x FishF1{name}. --trimmed-only --minimum-length 260
-$cutadapt -a file:BarFish3.fas -o ../FishF2{name}.fastq FishF2.fastq -e 0.1 -x FishF2{name}. --trimmed-only --minimum-length 260
+$cutadapt -a file:BarFish3.fas -o ../FishF1{name}.fastq FishF1.fastq -e 0.1 -x FishF1{name}. --trimmed-only --minimum-length 260 --maximum-length 310
+$cutadapt -a file:BarFish3.fas -o ../FishF2{name}.fastq FishF2.fastq -e 0.1 -x FishF2{name}. --trimmed-only --minimum-length 260 --maximum-length 310
 
 $cd ../
 $cat FishF*.fastq > mergedFish2.fastq
@@ -44,8 +44,8 @@ $usearch -fastq_filter mergedFish2.fastq -fastq_maxee 1.0 -fastaout filteredFish
 $echo "Amph"
 $cd Amph
 
-$cutadapt -a file:BarAmph3.fas -o ../AmphF1{name}.fastq AmphF1.fastq -e 0.1 -x AmphF1{name}. --trimmed-only --minimum-length 160 
-$cutadapt -a file:BarAmph3.fas -o ../AmphF2{name}.fastq AmphF2.fastq -e 0.1 -x AmphF2{name}. --trimmed-only --minimum-length 160 
+$cutadapt -a file:BarAmph3.fas -o ../AmphF1{name}.fastq AmphF1.fastq -e 0.1 -x AmphF1{name}. --trimmed-only --minimum-length 160 --maximum-length 220
+$cutadapt -a file:BarAmph3.fas -o ../AmphF2{name}.fastq AmphF2.fastq -e 0.1 -x AmphF2{name}. --trimmed-only --minimum-length 160 --maximum-length 220
 
 $cd ../
 $cat AmphF*.fastq > mergedAmph2.fastq
@@ -55,8 +55,8 @@ $usearch -fastq_filter mergedAmph2.fastq -fastq_maxee 1.0 -fastaout filteredAmph
 $echo "Squid"
 $cd Squid
 
-$cutadapt -a file:BarSquid3.fas -o ../SquidF1{name}.fastq SquidF1.fastq -e 0.1 -x SquidF1{name}. --trimmed-only --minimum-length 110 
-$cutadapt -a file:BarSquid3.fas -o ../SquidF2{name}.fastq SquidF2.fastq -e 0.1 -x SquidF2{name}. --trimmed-only --minimum-length 110 
+$cutadapt -a file:BarSquid3.fas -o ../SquidF1{name}.fastq SquidF1.fastq -e 0.1 -x SquidF1{name}. --trimmed-only --minimum-length 110 --maximum-length 160
+$cutadapt -a file:BarSquid3.fas -o ../SquidF2{name}.fastq SquidF2.fastq -e 0.1 -x SquidF2{name}. --trimmed-only --minimum-length 110 --maximum-length 160
 
 $cd ../
 $cat SquidF*.fastq > mergedSquid2.fastq
@@ -66,9 +66,9 @@ $usearch -fastq_filter mergedSquid2.fastq -fastq_maxee 1.0 -fastaout filteredSqu
 $echo "InvLong"
 $cd InvLong
 
-$cutadapt -a file:BarIL3.fas -o ../InvLongF1{name}.fastq InvLongF1.fastq -e 0.05 -x InvLongF1{name}. --trimmed-only --minimum-length 290
-$cutadapt -a file:BarIL3.fas -o ../InvLongF2{name}.fastq InvLongF2.fastq -e 0.05 -x InvLongF2{name}. --trimmed-only --minimum-length 290
-$cutadapt -a file:BarIL3.fas -o ../InvLongF3{name}.fastq InvLongF3.fastq -e 0.05 -x InvLongF3{name}. --trimmed-only --minimum-length 290
+$cutadapt -a file:BarIL3.fas -o ../InvLongF1{name}.fastq InvLongF1.fastq -e 0.05 -x InvLongF1{name}. --trimmed-only --minimum-length 290 --maximum-length 340
+$cutadapt -a file:BarIL3.fas -o ../InvLongF2{name}.fastq InvLongF2.fastq -e 0.05 -x InvLongF2{name}. --trimmed-only --minimum-length 290 --maximum-length 340
+$cutadapt -a file:BarIL3.fas -o ../InvLongF3{name}.fastq InvLongF3.fastq -e 0.05 -x InvLongF3{name}. --trimmed-only --minimum-length 290 --maximum-length 340
 
 $cd ../
 $cat InvLongF*.fastq > mergedInvLong2.fastq
