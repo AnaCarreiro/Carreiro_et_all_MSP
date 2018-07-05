@@ -1,0 +1,122 @@
+#Merging#
+$usearch -fastq_mergepairs Fish_S2_L001_R1_001.fastq -relabel @ -fastqout ../out/mergedFish.fq
+
+$usearch -fastq_mergepairs Amph_S3_L001_R1_001.fastq -relabel @ -fastqout ../out/mergedAmph.fq
+
+$usearch -fastq_mergepairs Squid_S1_L001_R1_001.fastq -relabel @ -fastqout ../out/mergedSquid.fq
+
+$usearch -fastq_mergepairs Long-invert_S1_L001_R1_001.fastq -relabel @ -fastqout ../out/mergedInvLong.fq
+
+###Demultiplex###
+#5' adapters#
+
+$cd ../out
+
+$echo "Demultiplexing by 5' adapters"
+
+$echo "Fish"
+$cutadapt -g file:barFish5.fas -o ./Fish/Fish{name}.fastq mergedFish.fq -e 0.1 -x Fish{name}. --length-tag "length="
+
+$echo "Amph"
+$cutadapt -g file:barAmph5.fas -o ./Amph/Amph{name}.fastq mergedAmph.fq -e 0.1 -x Amph{name}. --length-tag "length="
+
+$echo "Squid"
+$cutadapt -g file:barSquid5.fas -o ./Squid/Squid{name}.fastq mergedSquid.fq -e 0.1 -x Squid{name}. --length-tag "length="
+
+$echo "InvLong"
+$cutadapt -g file:barIL5.fas -o ./InvLong/InvLong{name}.fastq mergedInvLong.fq -e 0.1 -x InvLong{name}. --length-tag "length="
+
+###Demultiplex by 3' adapters###
+
+$echo "Demultiplexing by 3' adapters and Filtering"
+
+$echo "Fish"
+$cd Fish
+
+$cutadapt -a file:BarFish3.fas -o ../FishF1{name}.fastq FishF1.fastq -e 0.1 -x FishF1{name}. --trimmed-only --minimum-length 260
+$cutadapt -a file:BarFish3.fas -o ../FishF2{name}.fastq FishF2.fastq -e 0.1 -x FishF2{name}. --trimmed-only --minimum-length 260
+
+$cd ../
+$cat FishF*.fastq > mergedFish2.fastq
+
+$usearch -fastq_filter mergedFish2.fastq -fastq_maxee 1.0 -fastaout filteredFish.fas
+
+$echo "Amph"
+$cd Amph
+
+$cutadapt -a file:BarAmph3.fas -o ../AmphF1{name}.fastq AmphF1.fastq -e 0.1 -x AmphF1{name}. --trimmed-only --minimum-length 160 
+$cutadapt -a file:BarAmph3.fas -o ../AmphF2{name}.fastq AmphF2.fastq -e 0.1 -x AmphF2{name}. --trimmed-only --minimum-length 160 
+
+$cd ../
+$cat AmphF*.fastq > mergedAmph2.fastq
+
+$usearch -fastq_filter mergedAmph2.fastq -fastq_maxee 1.0 -fastaout filteredAmph.fas
+
+$echo "Squid"
+$cd Squid
+
+$cutadapt -a file:BarSquid3.fas -o ../SquidF1{name}.fastq SquidF1.fastq -e 0.1 -x SquidF1{name}. --trimmed-only --minimum-length 110 
+$cutadapt -a file:BarSquid3.fas -o ../SquidF2{name}.fastq SquidF2.fastq -e 0.1 -x SquidF2{name}. --trimmed-only --minimum-length 110 
+
+$cd ../
+$cat SquidF*.fastq > mergedSquid2.fastq
+
+$usearch -fastq_filter mergedSquid2.fastq -fastq_maxee 1.0 -fastaout filteredSquid.fas
+
+$echo "InvLong"
+$cd InvLong
+
+$cutadapt -a file:BarIL3.fas -o ../InvLongF1{name}.fastq InvLongF1.fastq -e 0.05 -x InvLongF1{name}. --trimmed-only --minimum-length 290
+$cutadapt -a file:BarIL3.fas -o ../InvLongF2{name}.fastq InvLongF2.fastq -e 0.05 -x InvLongF2{name}. --trimmed-only --minimum-length 290
+$cutadapt -a file:BarIL3.fas -o ../InvLongF3{name}.fastq InvLongF3.fastq -e 0.05 -x InvLongF3{name}. --trimmed-only --minimum-length 290
+
+$cd ../
+$cat InvLongF*.fastq > mergedInvLong2.fastq
+
+$usearch -fastq_filter mergedInvLong2.fastq -fastq_maxee 1.0 -fastaout filteredInvLong.fas
+
+### Uniques ###
+
+$echo "Finding Uniques"
+
+$echo "Fish"
+$usearch -fastx_uniques filteredFish.fas -fastaout uniquesFish.fas -relabel Uniq -sizeout 
+
+$echo "Amph"
+$usearch -fastx_uniques filteredAmph.fas -fastaout uniquesAmph.fas -relabel Uniq -sizeout 
+
+$echo "Squid"
+$usearch -fastx_uniques filteredSquid.fas -fastaout uniquesSquid.fas -relabel Uniq -sizeout 
+
+$echo "InvLong"
+$usearch -fastx_uniques filteredInvLong.fas -fastaout uniquesInvLong.fas -relabel Uniq -sizeout 
+
+### OTU's and cut singletons###
+#mt12S and mtCOI primers are clustered through an UPARSE pipeline (97% clustering)#
+#r18S and r28S primers are clustered through an UNOISE pipeline (99% clustering)#
+
+$echo "OTU clustering and table"
+
+$echo "Fish"
+$usearch -cluster_otus uniquesFish.fas -minsize 2 -otus otusFish.fas -relabel OTU
+$usearch -usearch_global mergedFish2.fastq -db otusFish.fas -strand plus -id 0.97 -otutabout otutableFish.txt
+$less -S otutableFish.txt
+
+$echo "Amph"
+$usearch -unoise3 uniquesAmph.fas -zotus zotus100Amph.fas -minsize 4
+$usearch -sortbylength zotus100Amph.fas -fastaout zotus1002Amph.fas
+$usearch -cluster_smallmem zotus1002Amph.fas -id 0.99 -relabel OTU -centroids otusAmph.fas 
+$usearch -usearch_global mergedAmph2.fastq -db otusAmph.fas -strand plus -id 0.97 -otutabout otutableAmph.txt
+$less -S otutableAmph.txt
+
+$echo "Squid"
+$usearch -unoise3 uniquesSquid.fas -zotus zotus100Squid.fas -minsize 4
+$usearch -sortbylength zotus100Squid.fas -fastaout zotus1002Squid.fas
+$usearch -cluster_smallmem zotus1002Squid.fas -id 0.99 -relabel OTU -centroids otusSquid.fas 
+$usearch -usearch_global mergedSquid2.fastq -db otusSquid.fas -strand plus -id 0.97 -otutabout otutableSquid.txt
+$less -S otutableSquid.txt
+
+$echo "InvLong"
+$usearch -cluster_otus uniquesInvLong.fas -minsize 2 -otus otusInvLong.fas -relabel OTU
+$usearch -usearch_global mergedInvLong2.fastq -db otusInvLong.fas -strand plus -id 0.97 -otutabout otutableInvLong.txt
+$less -S otutableInvLong.txt
