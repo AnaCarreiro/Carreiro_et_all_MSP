@@ -1,3 +1,6 @@
 # Carreiro_et_all_MSP
-Using molecular diet analyses and stable isotopes to unravel the foraging ecology of storm petrels in the North Atlantic Ocean. 
-Madeiran Storm-petrel used as study species on diet, trophic ecology and tracking.
+Metabarcoding, stables isotopes, and tracking: unraveling the trophic ecology of a winter‑breeding storm petrel (Hydrobates castro)
+with a multimethod approach.
+Ana Rita Carreiro · Vítor H. Paiva · Renata Medeiros · Kirsty A. Franklin · Nuno Oliveira · Ana I. Fagundes · Jaime A. Ramos
+
+carreiro.ar92@gmail.com
